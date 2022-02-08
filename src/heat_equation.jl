@@ -99,7 +99,7 @@ function solve_model(model_with_params, run_name)
     return m
 end
 
-println("Running Benchmark Problems")
+println("Running Benchmark - Heat Equation")
 #m_eago        = solve_model(eago, :eago)
 #m_eago_grad   = solve_model(eago_grad, :eago_grad)
 #m_eago_enum   = solve_model(eago_enum, :eago_enum)
