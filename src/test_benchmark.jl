@@ -1,7 +1,6 @@
 include(joinpath(@__DIR__, "config.jl"))
 
-function generate_model(nvar, v)
-
+function populate_Q!(Q, nvar, v)
     Q = zeros(3*nvar, 3*nvar)
     for i in 1:3*nvar, j in 1:3*nvar
         if i <= j
@@ -10,6 +9,16 @@ function generate_model(nvar, v)
             end
         end
     end
+    return Q
+end
+
+function generate_model!(model_file_name, nvar, v)
+
+    Q = zeros(3*nvar, 3*nvar)
+    while iszero(sum(Q))
+        populate_Q!(Q, nvar, v)
+    end
+
     c = -rand(nvar).*510 .- 2
 
     @variables(m, -1 <= x[i=1:nvar] <= 1)
@@ -43,6 +52,8 @@ function generate_model(nvar, v)
 
     open(model_file_name, "w") do file
         write(file, "using JuMP, EAGO\n
+                     n = $nvar\n
+                     v = $v\n
                      m = Model()\n
                      @variable(m, -1 <= x[i=1:$nvar] <= 1)\n
                      @variable(m, $(obj_bnd.lo) <= q <= $(obj_bnd.hi))\n
@@ -51,7 +62,17 @@ function generate_model(nvar, v)
                      return m\n
                     "
               )
+    println("wrote instance to $model_file_name")
 end
 
-function create_lib()
+function create_lib(file_path)
+    nvec = [5, 7, 9]
+    vvec = [0.3, 0.5, 0.7]
+    for i = 1:200
+        nvar = 
+        v = rand(vvec)
+        instance_file_path = file_path*"_$i_$nvar_$v"
+        generate_model!(nvar, v)
+    end
+    return 
 end
