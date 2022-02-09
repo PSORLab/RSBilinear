@@ -1,7 +1,7 @@
 include(joinpath(@__DIR__, "config.jl"))
 
-function solve_model(model_with_params, run_name)
-    m = model_with_params()
+function solve_model(opt_factory, run_name)
+    m = Model(opt_factory)
 
     xL = [1200.0; 7.0; 0.1; -1.078; -1.078]
     xU = [1500.0; 10.0; 0.3; 1.078; 1.078]

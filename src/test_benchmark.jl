@@ -76,3 +76,27 @@ function create_lib(file_path)
     end
     return 
 end
+
+create_lib_path = joinpath(@__DIR__, "src", "MINLPLib.jl", "instances")
+
+# set create_lib_files to true to generate new composite QPs in the problem libary
+create_lib_files = false
+create_lib_files && create_lib()
+
+println("Begin running benchmark set.")
+solvers = Dict{String,Any}()
+solvers["SCIP--REG"] = scip
+solvers["BARON-REG"] = baron
+
+solvers["EAGO--REG"] = eago
+solvers["EAGO--SUB"] = eago_grad
+solvers["EAGO--AFF"] = eago_affine
+solvers["EAGO--ENU"] = eago_enum
+
+params = SolverBenchmarking.BenchmarkParams(time = 100, rerun = false, has_obj_bnd = false)
+result_path = joinpath(@__DIR__, "benchmark_set_results")
+
+SolverBenchmarking.run_solver_benchmark(result_path, solvers, "composite_qp", "composite_qp"; params = params)
+SolverBenchmarking.summarize_results("composite_qp", result_path)
+
+println("Finish running benchmark set.")

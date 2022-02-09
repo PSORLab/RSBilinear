@@ -44,8 +44,8 @@ obj_bnd = Interval(0.0, obj.hi)
 #=
 Adds constraints, objective, etc to model and solves
 =#
-function solve_model(model_with_params, run_name)
-    m = model_with_params()
+function solve_model(opt_factory, run_name)
+    m = Model(opt_factory)
     T1 = 500
     T101 = 600
 
