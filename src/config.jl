@@ -6,6 +6,7 @@ and sets any relevant parameters
 =#
 
 function set_eago_tolerances!(m)
+    MOI.set(m, MOI.RawOptimizerAttribute("verbosity"), 4)
     MOI.set(m, MOI.RawOptimizerAttribute("absolute_tolerance"), 1E-4)
     MOI.set(m, MOI.RawOptimizerAttribute("relative_tolerance"), 1E-4)
 end

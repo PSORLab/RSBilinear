@@ -49,7 +49,7 @@ function solve_model(opt_factory, run_name)
     T1 = 500
     T101 = 600
 
-    n = 100
+    n = 101
     Δx = 1/(n-1)
     @variable(m, 0.01 <= p <= 10.0)
     
@@ -60,7 +60,10 @@ function solve_model(opt_factory, run_name)
         d_coeff[i] = -(isone(i) ? 500 : ((i == 101) ? 600 : q0))*Δx^2
     end
     #@NLexpression(m, d[i=1:n], d_coeff[i]*inv(p))
-    @NLexpression(m, d[i=1:n], d_coeff[i]*p^(-1))
+    d = Any[nothing for i=1:n]
+    for i = 1:n
+        d[i] =  add_NL_expression(m, :($(d_coeff[i])*$(p)^(-1)))
+    end
     b = Any[nothing for i=1:n]
     b[1] = 1.0
     b[n] = 1.0
@@ -74,7 +77,7 @@ function solve_model(opt_factory, run_name)
     cprime[1] = add_NL_expression(m, :(($(b[1]))^(-1)))
     for i = 2:(n-1)
         #cprime[i] = add_NL_expression(m, :(inv($(b[i])) - $(cprime[i-1])))
-        cprime[i] = add_NL_expression(m, :(($(b[i]))^(-1) - $(cprime[i-1])))  
+        cprime[i] = add_NL_expression(m, :(($(b[i]) - $(cprime[i-1]))^(-1)))  
     end
 
     dprime = Any[nothing for i=1:n]
@@ -82,7 +85,7 @@ function solve_model(opt_factory, run_name)
     dprime[1] = add_NL_expression(m, :($(d[1])*($(b[1]))^(-1)))
     for i = 2:n
         #dprime[i] = add_NL_expression(m, :(($(d[1]) - $(dprime[i-1]))*inv($(b[i]) - $(cprime[i-1]))))
-        dprime[i] = add_NL_expression(m, :(($(d[1]) - $(dprime[i-1]))*($(b[i])^(-1) - $(cprime[i-1]))))
+        dprime[i] = add_NL_expression(m, :(($(d[i]) - $(dprime[i-1]))*($(b[i]) - $(cprime[i-1])^(-1))))
     end
 
     T = Any[nothing for i=1:n]
@@ -100,8 +103,8 @@ function solve_model(opt_factory, run_name)
 end
 
 println("Running Benchmark - Heat Equation")
-#m_eago        = solve_model(eago, :eago)
+m_eago        = solve_model(eago, :eago)
 #m_eago_grad   = solve_model(eago_grad, :eago_grad)
 #m_eago_enum   = solve_model(eago_enum, :eago_enum)
 #m_eago_affine = solve_model(eago_affine, :eago_affine)
-m_scip        = solve_model(scip, :scip)
+#m_scip        = solve_model(scip, :scip)
