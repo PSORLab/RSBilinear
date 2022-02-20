@@ -32,14 +32,19 @@ function compute_T(p::T) where T
     A[n,n] = 1.0
     A\b
 end
-p_ref = 0.33
+p_ref = 0.5
 T_ref = compute_T(p_ref)
 
+@show T_ref[1]
+@show T_ref[n]
+
 # Maximum temperature specified in Mitsos 2009 to be 2000
-obj = (2000 - 500)^2 + (2000 - 600)^2 + sum((T_ref[i] - Interval(0,2000))^2 for i=2:(n-1))
+obj = sum((T_ref[i] - Interval(0,2000))^2 for i=2:(n-1))
+
+@show obj
 
 # Min objective for SSE is always 0
-obj_bnd = Interval(0.0, obj.hi)
+obj_bnd = Interval(obj.lo, obj.hi)
 
 #=
 Adds constraints, objective, etc to model and solves
@@ -108,3 +113,7 @@ m_eago        = solve_model(eago, :eago)
 #m_eago_enum   = solve_model(eago_enum, :eago_enum)
 #m_eago_affine = solve_model(eago_affine, :eago_affine)
 #m_scip        = solve_model(scip, :scip)
+#m_baron        = solve_model(baron, :baron)
+
+function solve_model_nlexpr(opt_factory, run_name)
+end

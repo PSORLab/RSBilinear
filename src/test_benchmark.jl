@@ -88,10 +88,10 @@ solvers = Dict{String,Any}()
 solvers["SCIP--REG"] = scip
 solvers["BARON-REG"] = baron
 
-solvers["EAGO--REG"] = eago
-solvers["EAGO--SUB"] = eago_grad
-solvers["EAGO--AFF"] = eago_affine
-solvers["EAGO--ENU"] = eago_enum
+#solvers["EAGO--REG"] = eago
+#solvers["EAGO--SUB"] = eago_grad
+#solvers["EAGO--AFF"] = eago_affine
+s#olvers["EAGO--ENU"] = eago_enum
 
 params = SolverBenchmarking.BenchmarkParams(time = 100, rerun = false, has_obj_bnd = false)
 result_path = joinpath(@__DIR__, "benchmark_set_results")

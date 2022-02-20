@@ -1,11 +1,13 @@
 include(joinpath(@__DIR__, "config.jl"))
 
+# Fix... x1 doesn't participate...
+
 function solve_model(opt_factory, run_name)
     m = Model(opt_factory)
 
     xL = [1200.0; 7.0; 0.1; -1.078; -1.078]
     xU = [1500.0; 10.0; 0.3; 1.078; 1.078]
-    @variable(m, xL[i] <= x[i=1:5] <= xU[i])
+    @variable(m, xL[i] <= x[i=2:5] <= xU[i])
     @variable(m, z[i=1:2], Bin)
 
     @constraint(m, z[1] + z[2] <= 1)
@@ -23,7 +25,7 @@ function solve_model(opt_factory, run_name)
 
     function objective_interval_bound(x, z)
         y1ex_1 = 14.84 + coeff1*x[3] + ct1
-        y1ex_2 = 0.576 + coeff2*x[1] + coeff3*x[3] + ct3
+        #y1ex_2 = 0.576 + coeff2*x[1] + coeff3*x[3] + ct3
         y1ex_3 = -0.006 + 0.006*x[2] + 0.0038*x[3] - 0.0008*x[2]*x[3]
     
         y2ex_1 = 0.9015 + 0.4874*x[4] + 5.3102*y1ex_1 + 0.0067*z[1] - 0.03402*z[2] + 0.0438*x[4]*z[1] + 0.276*x[4]*z[2] - 0.67*x[4]^2 - 0.39*y1ex_1^2
@@ -41,7 +43,7 @@ function solve_model(opt_factory, run_name)
     @variable(m, fIntv.lo <= η <= fIntv.hi)
 
     y1ex_1 = :(14.84 + $coeff1*($(x[3])) + $ct1)
-    y1ex_2 = :(0.576 + $coeff2*($(x[1])) + $coeff3*($(x[3])) + $ct3)
+    #y1ex_2 = :(0.576 + $coeff2*($(x[1])) + $coeff3*($(x[3])) + $ct3)
     y1ex_3 = :(-0.006 + 0.006*($(x[2])) + 0.0038*($(x[3])) - 0.0008*($(x[2]))*($(x[3])))
     
     y2ex_1 = :(0.9015 + 0.4874*($(x[4])) + 5.3102*($y1ex_1) + 0.0067*($(z[1])) - 0.03402*($(z[2])) + 0.0438*($(x[4]))*($(z[1])) + 0.276*($(x[4]))*($(z[2])) - 0.67*($(x[4]))^2 - 0.39*($y1ex_1)^2)
@@ -59,8 +61,8 @@ function solve_model(opt_factory, run_name)
 end
 
 println("Running Benchmark - Response Surface Model")
-#m_eago        = solve_model(eago, :eago)
-#m_eago_grad   = solve_model(eago_grad, :eago_grad)
+m_eago        = solve_model(eago, :eago)
+m_eago_grad   = solve_model(eago_grad, :eago_grad)
 #m_eago_enum   = solve_model(eago_enum, :eago_enum)
 #m_eago_affine = solve_model(eago_affine, :eago_affine)
-m_scip        = solve_model(scip, :scip)
+#m_scip        = solve_model(scip, :scip)
