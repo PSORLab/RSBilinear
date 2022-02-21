@@ -39,12 +39,12 @@ function generate_model!(model_file_name, nvar, v)
     y = Any[nothing for i=1:3*nvar]
     ybnd = zeros(Interval{Float64}, 3*nvar)
     for i=1:nvar
-        y[3*i-2] = "x[$i]^2"
-        y[3*i-1] = "x[$i]^3"
-        y[3*i] = "x[$i]^4"
+        y[3*i-2] = "\$(x[$i])^2"
+        y[3*i-1] = "\$(x[$i])^3"
+        y[3*i] = "\$(x[$i])^4"
         ybnd[3*i-2] = Interval(0,1)
-        ybnd[3*i-2] = Interval(-1,1)
-        ybnd[3*i-2] = Interval(0,1)
+        ybnd[3*i-1] = Interval(-1,1)
+        ybnd[3*i] = Interval(0,1)
     end
     
     obj = ""
@@ -62,7 +62,7 @@ function generate_model!(model_file_name, nvar, v)
         end
     end
     for i=1:nvar
-        obj = obj*" + $(c[i])*x[$i]"
+        obj = obj*" + $(c[i])*\$(x[$i])"
     end
     obj_bnd += sum(c)
 
@@ -83,12 +83,12 @@ function generate_model!(model_file_name, nvar, v)
 end
 
 function create_lib(file_path)
-    nvec = [5, 7, 9]
+    nvec = [10, 15, 20]
     vvec = [0.3, 0.5, 0.7]
     for i = 1:200
         nvar = rand(nvec)
         v = rand(vvec)
-        instance_file_path = joinpath(file_path, "$(i)_$(nvar)_$(string(v)[1:2:3]).jl")
+        instance_file_path = joinpath(file_path, "rs_quadratic_comp", "$(i)_$(nvar)_$(string(v)[1:2:3]).jl")
         println("generating model $instance_file_path")
         generate_model!(instance_file_path, nvar, v)
     end
@@ -139,13 +139,13 @@ function print_summary_tables(df_comb, fig_name, env_lib, upper_limit)
     gdf_check_infeasible  = groupby(df_comb_infeas, Symbol[:SolverName, :ActFunc])
     @show combine(gdf_check_infeasible, :SolveTime => x -> count(fill(true,length(x))))
 
-    #gdf_status = groupby(df_comb, Symbol[:SolveName, :SolvedInTime])
+    #gdf_status = groupby(df_comb, Symbol[:SolverName, :SolvedInTime])
     env_folder = joinpath(@__DIR__, "MINLPLib.jl", "instances", env_lib)
     name_anns = filter(x -> !occursin("gelu",x), readdir(joinpath(env_folder)))
 
     df_comb.UnsolvedRelativeGap = map((x,y,z) -> (~x & ~y & isfinite(z)), df_comb.CorrectlySolved, df_comb.IncorrectFeasibility, df_comb.RelativeGap)
     df_comb_gap = df_comb[df_comb.UnsolvedRelativeGap,:]
-    gdf_comb_gap  = groupby(df_comb_gap, Symbol[:SolveName, :ActFunc])
+    gdf_comb_gap  = groupby(df_comb_gap, Symbol[:SolverName, :ActFunc])
     @show combine(gdf_comb_gap, :RelativeGap => x -> mean(x))
 
     trunc_solved_time = rand(200, 6)
@@ -170,8 +170,8 @@ end
 result_path = joinpath(@__DIR__, "solver_benchmark_result")
 
 params= SolverBenchmarking.BenchmarkParams(time = 300.0, rerun = false, has_obj_bnd = true)
-SolverBenchmarking.run_solver_benchmark(result_path, solvers, "rs_quadratic_comp", "rs_quadratic_comp",; params = params)
+SolverBenchmarking.run_solver_benchmark(result_path, solvers, "rs_quadratic_comp", "rs_quadratic_comp"; params = params)
 SolverBenchmarking.summarize_results("rs_quadratic_comp", result_path)
 
-df = DataFrame(CSV.File(joinpath(result_path, "rs_quadratic_comp", "rs_quadratic_comp.csv")))
+df = DataFrame(CSV.File(joinpath(result_path, "rs_quadratic_comp", "result_summary.csv")))
 print_summary_tables(df, "performance_profile", "rs_quadratic_comp", 300.0)
