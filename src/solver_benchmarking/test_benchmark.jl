@@ -53,10 +53,10 @@ function generate_model!(model_file_name, nvar, v)
     for i in 1:3*nvar, j in 1:3*nvar
         if !iszero(Q[i,j])
             if first_nonzero
-                obj = "$(Q[i,j])*("*y[i]*")*("*y[j]*")"
+                obj = "$(Q[i,j])*(("*y[i]*")*("*y[j]*"))"
                 first_nonzero = false
             else
-                obj = obj*" + $(Q[i,j])*("*y[i]*")*("*y[j]*")"
+                obj = obj*" + $(Q[i,j])*(("*y[i]*")*("*y[j]*"))"
             end
             obj_bnd += Q[i,j]*ybnd[i]*ybnd[j]
         end
@@ -83,7 +83,7 @@ function generate_model!(model_file_name, nvar, v)
 end
 
 function create_lib(file_path)
-    nvec = [10, 15, 20]
+    nvec = [10, 20, 30]
     vvec = [0.3, 0.5, 0.7]
     for i = 1:200
         nvar = rand(nvec)
@@ -96,7 +96,7 @@ function create_lib(file_path)
 end
 
 # set create_lib_files to true to generate new ANNs in the problem libary
-create_lib_files = true
+create_lib_files = false
 create_lib_path = joinpath(@__DIR__, "MINLPLib.jl", "instances")
 create_lib_files && create_lib(create_lib_path)
 
@@ -104,7 +104,7 @@ create_lib_files && create_lib(create_lib_path)
 solvers = Dict{String,Any}()
 solvers["SCIP--REG"] = scip
 solvers["BARON-REG"] = baron
-#solvers["EAGO--REG"] = eago
+solvers["EAGO--REG"] = eago
 #solvers["EAGO--SUB"] = eago_grad
 #solvers["EAGO--AFF"] = eago_affine
 #solvers["EAGO--ENU"] = eago_enum
@@ -151,12 +151,12 @@ function print_summary_tables(df_comb, fig_name, env_lib, upper_limit)
     trunc_solved_time = rand(200, 6)
     for (i,n) in enumerate(name_anns)
         plt_sdf = df_comb[occursin.(n[1:end-3], string.(df_comb.InstanceName)), :]
-        trunc_solved_time[i,1] = plt_sdf[plt_sdf.SolveName .== "SCIP",:].SolveTime[1]  # SCIP
-        trunc_solved_time[i,2] = plt_sdf[plt_sdf.SolveName .== "BARON",:].SolveTime[1] # BARON
-        trunc_solved_time[i,3] = plt_sdf[plt_sdf.SolveName .== "EAGO",:].SolveTime[1]  # EAGO Env Entry
-        trunc_solved_time[i,4] = plt_sdf[plt_sdf.SolveName .== "EAGO Sub",:].SolveTime[1]  # EAGO Exp Entry
-        trunc_solved_time[i,5] = plt_sdf[plt_sdf.SolveName .== "EAGO Aff",:].SolveTime[1]  # EAGO Env Entry
-        trunc_solved_time[i,6] = plt_sdf[plt_sdf.SolveName .== "EAGO Enum",:].SolveTime[1]  # EAGO Exp Entry
+        trunc_solved_time[i,1] = plt_sdf[plt_sdf.SolveNamer .== "SCIP",:].SolveTime[1]  # SCIP
+        trunc_solved_time[i,2] = plt_sdf[plt_sdf.SolveNamer .== "BARON",:].SolveTime[1] # BARON
+        trunc_solved_time[i,3] = plt_sdf[plt_sdf.SolveNamer .== "EAGO",:].SolveTime[1]  # EAGO Env Entry
+        trunc_solved_time[i,4] = plt_sdf[plt_sdf.SolveNamer .== "EAGO Sub",:].SolveTime[1]  # EAGO Exp Entry
+        trunc_solved_time[i,5] = plt_sdf[plt_sdf.SolveNamer .== "EAGO Aff",:].SolveTime[1]  # EAGO Env Entry
+        trunc_solved_time[i,6] = plt_sdf[plt_sdf.SolveNamer .== "EAGO Enum",:].SolveTime[1]  # EAGO Exp Entry
     end
     plt = performance_profile(PlotsBackend(), trunc_solved_time, ["SCIP", "BARON", "EAGO", "EAGO Sub", "EAGO Aff", "EAGO Enum"], linewidth = 1.5, linestyles=[:solid, :dash, :dashdot, :dot, :dashdot, :dot], legend=:bottomright)
     xlabel!("\$\\tau\$")
