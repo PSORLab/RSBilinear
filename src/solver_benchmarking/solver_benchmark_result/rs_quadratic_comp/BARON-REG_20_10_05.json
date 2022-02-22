@@ -1,0 +1,1 @@
+{"SolverName":"BARON-REG","ObjBound":-1966.28838357,"SolveTime":0.18,"PrimalStatus":"FEASIBLE_POINT","InstanceName":"20_10_05","SolveTimeRaw":0.4090001583099365,"CompletedSolveTime":100.0,"ObjValue":-1966.091754727458,"Error":false,"TerminationStatus":"LOCALLY_SOLVED"}

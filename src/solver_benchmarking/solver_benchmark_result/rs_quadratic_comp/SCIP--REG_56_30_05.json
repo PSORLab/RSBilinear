@@ -1,0 +1,1 @@
+{"SolverName":"SCIP--REG","ObjBound":-9463.344665644845,"SolveTime":300.0,"PrimalStatus":"FEASIBLE_POINT","InstanceName":"56_30_05","SolveTimeRaw":299.06900000572205,"CompletedSolveTime":100.0,"ObjValue":-8642.344752334486,"Error":false,"TerminationStatus":"TIME_LIMIT"}
