@@ -6,13 +6,13 @@ Comments on formulation. Using x/y = x*y^(-1) reformulation as apriori relaxatio
 is implemented on * only currently and SCIP/baron don't support inv operator.
 =#
 
-n = 101
+n = 5
 Δx = 1/(n-1)
 
 # generate data for fitting the temperature data to (T_ref)
 function compute_T(p::T) where T
-    A  = zeros(T, 101, 101)
-    b  = zeros(T, 101)
+    A  = zeros(T, n, n)
+    b  = zeros(T, n)
     in_range_ref(i) = 31 <= i <= 65
 
     b[1] = 500
@@ -54,7 +54,6 @@ function solve_model(opt_factory, run_name)
     T1 = 500
     T101 = 600
 
-    n = 101
     Δx = 1/(n-1)
     @variable(m, 0.01 <= p <= 10.0)
     
@@ -108,11 +107,11 @@ function solve_model(opt_factory, run_name)
 end
 
 println("Running Benchmark - Heat Equation")
-m_eago        = solve_model(eago, :eago)
+#m_eago        = solve_model(eago, :eago)
 #m_eago_grad   = solve_model(eago_grad, :eago_grad)
 #m_eago_enum   = solve_model(eago_enum, :eago_enum)
 #m_eago_affine = solve_model(eago_affine, :eago_affine)
-#m_scip        = solve_model(scip, :scip)
+m_scip        = solve_model(scip, :scip)
 #m_baron        = solve_model(baron, :baron)
 
 function solve_model_nlexpr(opt_factory, run_name)

@@ -10,10 +10,10 @@ function set_eago_tolerances!(m)
     MOI.set(m, MOI.RawOptimizerAttribute("cut_min_iterations"), 1)
     MOI.set(m, MOI.RawOptimizerAttribute("cut_max_iterations"), 3)
     MOI.set(m, MOI.RawOptimizerAttribute("output_iterations"), 1)
-    MOI.set(m, MOI.RawOptimizerAttribute("iteration_limit"), 2000)
-    MOI.set(m, MOI.RawOptimizerAttribute("subgrad_tighten"), false)
-    MOI.set(m, MOI.RawOptimizerAttribute("absolute_tolerance"), 1E-4)
-    MOI.set(m, MOI.RawOptimizerAttribute("relative_tolerance"), 1E-4)
+    MOI.set(m, MOI.RawOptimizerAttribute("iteration_limit"), 100000)
+    MOI.set(m, MOI.RawOptimizerAttribute("subgrad_tighten"), true)
+    MOI.set(m, MOI.RawOptimizerAttribute("absolute_tolerance"), 1E-6)
+    MOI.set(m, MOI.RawOptimizerAttribute("relative_tolerance"), 1E-6)
 end
 
 """

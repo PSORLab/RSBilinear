@@ -46,10 +46,10 @@ function solve_model(opt_factory, run_name)
     #y1ex_2 = :(0.576 + $coeff2*($(x[1])) + $coeff3*($(x[3])) + $ct3)
     y1ex_3 = :(-0.006 + 0.006*($(x[2])) + 0.0038*($(x[3])) - 0.0008*($(x[2]))*($(x[3])))
     
-    y2ex_1 = :(0.9015 + 0.4874*($(x[4])) + 5.3102*($y1ex_1) + 0.0067*($(z[1])) - 0.03402*($(z[2])) + 0.0438*($(x[4]))*($(z[1])) + 0.276*($(x[4]))*($(z[2])) - 0.67*($(x[4]))^2 - 0.39*($y1ex_1)^2)
+    y2ex_1 = :(0.9015 + 0.4874*($(x[4])) + 5.3102*($y1ex_1) + 0.0067*($(z[1])) - 0.03402*($(z[2])) + 0.0438*(($(x[4]))*($(z[1]))) + 0.276*(($(x[4]))*($(z[2]))) - 0.67*($(x[4]))^2 - 0.39*($y1ex_1)^2)
     y2ex_2 = :(-0.2 - 0.159*($(x[4])) - 1.183*($y1ex_1) - 0.1317*($(x[4]))^2 + 0.1057*($y1ex_1)^2)
     
-    y3ex_1 = :(0.034 + 0.00137*($y2ex_1) + 0.0617*($(x[5])) - 0.0077*($y2ex_1)*($(x[5])) + 0.0103*($(x[5]))^2)
+    y3ex_1 = :(0.034 + 0.00137*($y2ex_1) + 0.0617*($(x[5])) - 0.0077*(($y2ex_1)*($(x[5]))) + 0.0103*($(x[5]))^2)
     y3ex_2 = :(-12.77 + 2.457*($y2ex_1) - 0.927*($y2ex_2) + 2.876*($(x[5])) + 2.853*($(x[5]))^2)
     
     add_NL_constraint(m, :(($y3ex_1 - $(v[1]))^2 + ($y1ex_3 + $y2ex_2 + $y3ex_2 - $(v[2]))^2 - $η <= 0.0))
@@ -57,11 +57,12 @@ function solve_model(opt_factory, run_name)
 
     optimize!(m)
     println("Complete solving problem ($(run_name)) in get")
+    println("Solve Time = $(solve_time(m))")
     return m
 end
 
 println("Running Benchmark - Response Surface Model")
-m_eago        = solve_model(eago, :eago)
+#m_eago        = solve_model(eago, :eago)
 m_eago_grad   = solve_model(eago_grad, :eago_grad)
 #m_eago_enum   = solve_model(eago_enum, :eago_enum)
 #m_eago_affine = solve_model(eago_affine, :eago_affine)
