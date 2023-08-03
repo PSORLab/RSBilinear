@@ -1,5 +1,5 @@
 # RSBilinear
-Data from Numerical Trials for Forthcoming Manuscript: "Improved convex and concave relaxations of composite bilinear forms" (hyperlink and citation information will be added once the paper becomes available online)
+Data for the numerical trials from the paper: "[Improved convex and concave relaxations of composite bilinear forms](https://doi.org/10.1007/s10957-023-02196-2)", Journal of Optimization Theory and Applications, 197, 174-204 (2023)
 
 # Authors
 [Matthew E. Wilhelm](https://scholar.google.com/citations?user=sr4baQ0AAAAJ&hl=en&authuser=1), [Matthew D. Stuber](https://cbe.engr.uconn.edu/person/matthew-stuber/)
